@@ -7,6 +7,7 @@ class HomeController extends Controller {
     this.ctx.body = 'hi, egg';
   }
   async postUsermsg() {
+    console.log('走到这里了');
     const ctx = this.ctx;
     const Usermsg = ctx.model.Usermsg;
     // console.log(ctx.request.body);
