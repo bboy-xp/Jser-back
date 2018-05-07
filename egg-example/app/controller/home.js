@@ -7,12 +7,13 @@ class HomeController extends Controller {
     this.ctx.body = 'hi, egg';
   }
   async postUsermsg() {
-    console.log('走到这里了');
+    // console.log('走到这里了');
     const ctx = this.ctx;
     const Usermsg = ctx.model.Usermsg;
     // console.log(ctx.request.body);
     const data = ctx.request.body;
     const usermsg = new Usermsg({
+      openId: data.openId,
       name: data.name,
       sex: data.sex,
       grade: data.grade,
@@ -27,6 +28,19 @@ class HomeController extends Controller {
     usermsg.save();
 
     ctx.body = 'ok';
+  }
+  async getUsermsg() {
+    const ctx = this.ctx;
+    const Usermsg = ctx.model.Usermsg;
+    const openId = ctx.request.body.openId;
+    // console.log(data);
+    const user = await new Promise((resolve,reject) => {
+      Usermsg.findOne({openId: openId},(err,doc) => {
+        resolve(doc);
+      })
+    })
+    console.log(user);
+    ctx.body = user;
   }
 }
 

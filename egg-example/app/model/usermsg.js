@@ -1,6 +1,7 @@
 module.exports = app => {
     const mongoose = app.mongoose;
     const UsermsgSchema = new mongoose.Schema({
+      openId: { type: String },
       name: { type: String },
       sex: { type: String },
       grade: { type: String },
