@@ -21,7 +21,7 @@ class HomeController extends Controller {
         }
       })
     })
-    console.log(haveUser);
+    // console.log(haveUser);
     if (haveUser) {
       var userUpdateMessage = await new Promise((resolve, reject) => {
         Usermsg.update({openId: data.openId},{
