@@ -75,6 +75,10 @@ class HomeController extends Controller {
     console.log(user);
     ctx.body = user;
   }
+  async getList() {
+    const ctx = this.ctx;
+    ctx.body = 'ok';
+  }
 }
 
 module.exports = HomeController;
