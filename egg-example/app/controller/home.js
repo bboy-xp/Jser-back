@@ -72,11 +72,12 @@ class HomeController extends Controller {
         resolve(doc);
       })
     })
-    console.log(user);
+    // console.log(user);
     ctx.body = user;
   }
   async getList() {
     const ctx = this.ctx;
+
     ctx.body = 'ok';
   }
 }
