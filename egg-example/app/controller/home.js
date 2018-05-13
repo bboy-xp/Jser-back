@@ -10,8 +10,10 @@ class HomeController extends Controller {
     // console.log('走到这里了');
     const ctx = this.ctx;
     const Usermsg = ctx.model.Usermsg;
+    
     // console.log(ctx.request.body);
     const data = ctx.request.body;
+    
     const haveUser = await new Promise((resolve,reject) => {
       Usermsg.findOne({openId: data.openId},(err,doc) => {
         if(doc){
@@ -65,20 +67,53 @@ class HomeController extends Controller {
   async getUsermsg() {
     const ctx = this.ctx;
     const Usermsg = ctx.model.Usermsg;
+    // const TotalUser = ctx.model.TotalUser;
     const openId = ctx.request.body.openId;
     // console.log(data);
+    // const totalUser = new TotalUser({
+    //   openId: openId
+    // });
+    // totalUser.save();
     const user = await new Promise((resolve,reject) => {
       Usermsg.findOne({openId: openId},(err,doc) => {
         resolve(doc);
       })
-    })
-    // console.log(user);
-    ctx.body = user;
+    });
+    if(user){
+      ctx.body = user;
+    }else{
+      ctx.body = "ok"
+    }
   }
   async getList() {
     const ctx = this.ctx;
-
-    ctx.body = 'ok';
+    const Usermsg = ctx.model.Usermsg;
+    const userList = await new Promise((resolve,reject) => {
+      Usermsg.find({},(err,doc) => {
+        resolve(doc);
+      })
+    })
+    ctx.body = userList;
+  }
+  async getData() {
+    const ctx = this.ctx;
+    const Usermsg = ctx.model.Usermsg;
+    const totalNum = await new Promise((resolve,reject) => {
+      resolve(Usermsg.count());
+    });
+    const boyNum = await new Promise((resolve,reject) => {
+      resolve(Usermsg.count({sex:"boy"}));
+    });
+    const girlNum = await new Promise((resolve,reject) => {
+      resolve(Usermsg.count({sex:"girl"}));
+    });
+    let data = {
+      totalNum: totalNum,
+      boyNum: boyNum,
+      girlNum: girlNum
+    }
+    // console.log(girlNum);
+    ctx.body = data;
   }
 }
 

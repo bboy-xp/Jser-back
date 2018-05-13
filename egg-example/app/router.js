@@ -9,5 +9,5 @@ module.exports = app => {
   router.post('/postUsermsg',controller.home.postUsermsg);
   router.post('/getUsermsg',controller.home.getUsermsg);
   router.get('/getList',controller.home.getList);
-
+  router.get('/getData',controller.home.getData)
 };
