@@ -67,13 +67,14 @@ class HomeController extends Controller {
   async getUsermsg() {
     const ctx = this.ctx;
     const Usermsg = ctx.model.Usermsg;
-    // const TotalUser = ctx.model.TotalUser;
+    const TotalUser = ctx.model.TotalUser;
     const openId = ctx.request.body.openId;
     // console.log(data);
-    // const totalUser = new TotalUser({
-    //   openId: openId
-    // });
-    // totalUser.save();
+    console.log(openId);
+    const totalUser = new TotalUser({
+      openId: openId
+    });
+    totalUser.save();
     const user = await new Promise((resolve,reject) => {
       Usermsg.findOne({openId: openId},(err,doc) => {
         resolve(doc);
