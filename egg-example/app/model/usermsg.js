@@ -12,6 +12,7 @@ module.exports = app => {
       reason: { type: Array },
       introduce: { type: String },
       otherReason: { type: String },
+      deleted: { type: Boolean }
     },{
       timestamps: true,
     });

@@ -10,11 +10,11 @@ class HomeController extends Controller {
     // console.log('走到这里了');
     const ctx = this.ctx;
     const Usermsg = ctx.model.Usermsg;
-    
+    const TotalUser = ctx.model.TotalUser;
     // console.log(ctx.request.body);
     const data = ctx.request.body;
     
-    const haveUser = await new Promise((resolve,reject) => {
+    const haveUser1 = await new Promise((resolve,reject) => {
       Usermsg.findOne({openId: data.openId},(err,doc) => {
         if(doc){
           resolve(true);
@@ -22,9 +22,10 @@ class HomeController extends Controller {
           resolve(false);
         }
       })
-    })
-    // console.log(haveUser);
-    if (haveUser) {
+    });
+    
+    // console.log(haveUser1);
+    if (haveUser1) {
       var userUpdateMessage = await new Promise((resolve, reject) => {
         Usermsg.update({openId: data.openId},{
           name: data.name,
@@ -41,7 +42,7 @@ class HomeController extends Controller {
           if (!err) {
             resolve('ok');
           } else {
-            reject(err);
+            resolve(err);
           }
         })
       });
@@ -59,9 +60,11 @@ class HomeController extends Controller {
         reason: data.reason,
         introduce: data.introduce,
         otherReason: data.otherReason,
+        deleted: false,
       });
       usermsg.save();
-    }
+    };
+    
     ctx.body = 'ok';
   }
   async getUsermsg() {
@@ -70,11 +73,24 @@ class HomeController extends Controller {
     const TotalUser = ctx.model.TotalUser;
     const openId = ctx.request.body.openId;
     // console.log(data);
-    console.log(openId);
-    const totalUser = new TotalUser({
-      openId: openId
+    // console.log(openId);
+    
+    const haveUser2 = await new Promise((resolve,reject) => {
+      TotalUser.findOne({openId: openId},(err,doc) => {
+        if(doc){
+          resolve(true);
+        }else{
+          resolve(false);
+        }
+      })
     });
-    totalUser.save();
+    if (haveUser2 == false) {
+      const totalUser = new TotalUser({
+        openId: openId,
+      });
+      totalUser.save();
+    }
+
     const user = await new Promise((resolve,reject) => {
       Usermsg.findOne({openId: openId},(err,doc) => {
         resolve(doc);
@@ -90,7 +106,7 @@ class HomeController extends Controller {
     const ctx = this.ctx;
     const Usermsg = ctx.model.Usermsg;
     const userList = await new Promise((resolve,reject) => {
-      Usermsg.find({},(err,doc) => {
+      Usermsg.find({deleted: false},(err,doc) => {
         resolve(doc);
       })
     })
@@ -99,6 +115,10 @@ class HomeController extends Controller {
   async getData() {
     const ctx = this.ctx;
     const Usermsg = ctx.model.Usermsg;
+    const TotalUser = ctx.model.TotalUser;
+    const allUser = await new Promise((resolve,reject) => {
+      resolve(TotalUser.count());
+    }); 
     const totalNum = await new Promise((resolve,reject) => {
       resolve(Usermsg.count());
     });
@@ -109,12 +129,88 @@ class HomeController extends Controller {
       resolve(Usermsg.count({sex:"girl"}));
     });
     let data = {
+      allUser: allUser,
       totalNum: totalNum,
       boyNum: boyNum,
       girlNum: girlNum
     }
     // console.log(girlNum);
     ctx.body = data;
+  }
+  async editData() {
+    const ctx = this.ctx;
+    const Usermsg = ctx.model.Usermsg;
+    // console.log(ctx.request.body);
+    const data = ctx.request.body;
+
+    var userUpdateMessage = await new Promise((resolve, reject) => {
+      Usermsg.update({openId: data.openId},{
+        name: data.name,
+        sex: data.sex,
+        grade: data.grade,
+        major: data.major,
+        college: data.college,
+        phoneNum: data.phoneNum,
+        level: data.level,
+        reason: data.reason,
+        introduce: data.introduce,
+        otherReason: data.otherReason,
+      },(err) => {
+        if (!err) {
+          resolve('ok');
+        } else {
+          resolve(err);
+        }
+      })
+    });
+    if(userUpdateMessage == 'ok') {
+      const userList = await new Promise((resolve,reject) => {
+        Usermsg.find({deleted: false},(err,doc) => {
+          resolve(doc);
+        })
+      })
+      ctx.body = userList;
+    }else{
+      ctx.body = userUpdateMessage;
+    }
+  }
+  async deleteData() {
+    const ctx = this.ctx;
+    const Usermsg = ctx.model.Usermsg;
+    // console.log(ctx.request.body);
+    const data = ctx.request.body;
+
+    var userUpdateMessage = await new Promise((resolve, reject) => {
+      Usermsg.update({openId: data.openId},{
+        name: data.name,
+        sex: data.sex,
+        grade: data.grade,
+        major: data.major,
+        college: data.college,
+        phoneNum: data.phoneNum,
+        level: data.level,
+        reason: data.reason,
+        introduce: data.introduce,
+        otherReason: data.otherReason,
+        deleted: data.deleted
+      },(err) => {
+        if (!err) {
+          resolve('ok');
+        } else {
+          resolve(err);
+        }
+      })
+    });
+    if(userUpdateMessage == 'ok') {
+      const userList = await new Promise((resolve,reject) => {
+        Usermsg.find({deleted: false},(err,doc) => {
+          resolve(doc);
+        })
+      })
+      ctx.body = userList;
+    }else{
+      ctx.body = userUpdateMessage;
+    }
   }
 }
 
